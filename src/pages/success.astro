@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { commitTransaction } from './lib/webpay';
+
+// Usamos el método get() de URLSearchParams para obtener el valor del parámetro
+const token_ws = Astro.url.searchParams.get('token_ws');
+
+let transactionResult;
+if (token_ws) {
+  try {
+    transactionResult = await commitTransaction(token_ws);
+  } catch (error) {
+    console.error('Error al confirmar la transacción:', error);
+  }
+}
+---
+
+<Layout title="Pago Exitoso">
+  <h1>Resultado de la Transacción</h1>
+  {transactionResult ? (
+    <div>
+      <p>Estado: {transactionResult.status}</p>
+      <p>Monto: {transactionResult.amount}</p>
+      <p>Orden de Compra: {transactionResult.buyOrder}</p>
+    </div>
+  ) : (
+    <p>Error al procesar la transacción o token no recibido</p>
+  )}
+</Layout>
